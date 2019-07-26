@@ -1,0 +1,60 @@
+#include <iostream>
+using namespace std;
+int n,m,value[100];  //n是变量数和m是约束,value是价值
+int status[100][100]; //物品i的属性
+int rstatus[100]; //属性i当前值
+int maxt[100];  //代表属性i的最大约束条件
+int ans;   //当前最大价值
+bool check(int x,int rvalue){ 
+	int res=0;
+	for(int i=x+1;i<=n;i++){
+		res+=value[i]; 
+	} 
+	if(rvalue+value[x]+res<=ans)
+                return false; 
+	for(i=1;i<=m;i++){
+		if(rstatus[i]+status[x][i]>maxt[i]){ 
+			return false;
+		}
+	}
+	return true; 
+}
+void dfs(int x,int rvalue){
+	if(x>n){
+		if(rvalue>ans){	
+			ans=rvalue;
+		}
+		return;
+	}
+	dfs(x+1,rvalue); 
+	if(!check(x,rvalue))return; 
+	for(int i=1;i<=m;i++){ 
+		rstatus[i]+=status[x][i]; 
+	}
+	dfs(x+1,rvalue+value[x]); 
+	for(i=1;i<=m;i++){
+		rstatus[i]-=status[x][i]; 
+	}
+}
+int main()
+{ 
+    cout<<" 请输入变量数n和约数m"<<endl;
+    cin>>n>>m;
+    cout<<" 请输入n个物品价值"<<endl;
+    for(int i=1;i<=n;i++){
+        cin>>value[i];
+    }
+    for(i=1;i<=m;i++){
+        cout<<" 请输入第 "<<i<<" 个属性"<<endl;
+        for(int j=1;j<=n;j++){
+            cin>>status[j][i];
+        }
+	}
+	cout<<" 输入m个属性的约束条件"<<endl;
+    for(i=1;i<=m;i++){
+    	cin>>maxt[i];
+	}
+	dfs(1,0); 
+	cout<<" 最大价值为:"<<ans<<endl;
+    return 0;
+}
